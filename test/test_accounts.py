@@ -93,11 +93,11 @@ def test_update_other_user(token):
     url = BASE_URL + "restful/accounts"
     headers = {"Authorization": "bearer " + token}
     account = {
-        "id": 10086,
-        "username": "icyfenix",
-        "name": "周志明",
+        "id": 4,
+        "username": "hh",
+        "name": "huahua",
         "avatar": "https://www.gravatar.com/avatar/1563e833e42fb64b41eed34c9b66d723?d=mp",
-        "telephone": "18888888888",
+        "telephone": "18888887772",
         "email": "icyfenix@gmail.com",
         "location": "唐家湾港湾大道科技一路3号远光软件股份有限公司",
     }
@@ -107,26 +107,3 @@ def test_update_other_user(token):
     assert resp.status_code == 400
     content = resp.json()
     assert "不是当前登陆用户" in content["message"]
-
-
-
-
-
-# 更新用户信息（普通用户只能更新自己的信息）
-def test_update_user():
-    url = "http://81.70.57.108:8080/restful/accounts"
-    headers = {
-        "Authorization": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiJzdW1tZXIiLCJzY29wZSI6WyJCUk9XU0VSIl0sImV4cCI6MTY4MTc0OTUxOSwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImp0aSI6IjA5N2M2NTlkLTkwMzctNGM0NS1iNjhkLTkzOTI0OTE0ZGQ4NSIsImNsaWVudF9pZCI6ImJvb2tzdG9yZV9mcm9udGVuZCIsInVzZXJuYW1lIjoic3VtbWVyIn0.roXh2lmYzRzoxuesKAldG-S-viPisfXUE2MZ6fogwa0"
-    }
-    data = {
-        "id": 7,
-        "username": "ll",
-        "name": "wang",
-        "avatar": "https://www.gravatar.com/avatar/1563e833e42fb64b41eed34c9b66d723?d=mp",
-        "telephone": "11111111111",
-        "email": "wang234@qq.com",
-        "location": "唐家湾港湾大道科技一路3号远光软件股份有限公司",
-    }
-    resp = requests.put(url, headers=headers, json=data)
-    json = resp.json()
-    assert resp.status_code == 200
