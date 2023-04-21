@@ -1,8 +1,10 @@
 from typing import List
+from common import BASE_URL
+import requests
 
 import pytest
 
-from common import login, product_data, delete_product,create_product, get_default_test_user_token
+from common import login, product_data, delete_product,create_product, get_default_test_user_token, new_account_data, delete_account
 
 
 # 使用 icyfenix 作为整个测试的测试用户
@@ -11,6 +13,32 @@ from common import login, product_data, delete_product,create_product, get_defau
 def token():
     resp = login("icyfenix", "MFfTW3uNI4eqhwDkG7HP9p2mzEUu/r2")
     return resp["access_token"]
+
+#新建用户的数据
+@pytest.fixture()
+def account_data():
+    new_data = new_account_data()
+    return new_data
+
+#创建一个新用户
+@pytest.fixture(scope='function')
+def create_account(token, account_data):
+    url = BASE_URL + "restful/accounts"
+    headers = {"Authorization": "bearer " + token}
+    resp = requests.post(url, headers=headers, json=account_data)
+    
+    yield
+    
+    delete_account(token, 'test_user')
+
+#删除用户
+@pytest.fixture(scope='function')
+def deleted_account_by_names(token):
+    pass
+    
+    yield
+
+    delete_account(token, 'test_user')
 
 
 # 新建产品的数据

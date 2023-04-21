@@ -18,7 +18,7 @@ def test_get_all_products():
 
 
 # 获取已经存在的产品  ：id = 3
-def test_get_product_by_id():
+def test_get_product_by_existing_id():
     url = BASE_URL + "restful/products/3"
 
     resp = requests.get(url)
@@ -29,7 +29,7 @@ def test_get_product_by_id():
 
 
 # 获取不存在的产品  ：id = 100000
-def test_get_product_by_id():
+def test_get_product_by_non_existing_id():
     url = BASE_URL + "restful/products/10000"
 
     resp = requests.get(url)
@@ -108,11 +108,22 @@ def test_del_non_existing_product(token):
     assert json["code"] == 1
 
 
-# 根据产品id查询库存GET
-def test_get_stockpile_by_id(token):
+# 根据已存在产品id查询库存GET
+def test_get_stockpile_by_existing_id(token):
     url = BASE_URL + "restful/products/stockpile/2"
     headers = {"Authorization": "bearer " + token}
 
     resp = requests.get(url, headers=headers)
     json = resp.json()
     assert resp.status_code == 200
+    assert json['amount'] >= 0
+
+# 根据不存在产品id查询库存GET
+def test_get_stockpile_by_non_existing_id(token):
+    url = BASE_URL + "restful/products/stockpile/10000"
+    headers = {"Authorization": "bearer " + token}
+
+    resp = requests.get(url, headers=headers)
+    json = resp.json()
+    assert resp.status_code == 500
+    assert json['code'] == 1

@@ -1,3 +1,4 @@
+from typing import List
 import requests
 
 from common import BASE_URL
@@ -38,32 +39,29 @@ def test_get_account_with_non_existing_username():
 
 # 创建新的用户
 # 成功
-def test_add_new_user_success():
-    url = "http://81.70.57.108:8080/restful/accounts"
-    data = {
-        "username": "sum",
-        "email": "1162162162@qq.com",
-        "password": "78910",
-        "telephone": "17676207620",
-        "name": "hao",
-    }
-    resp = requests.post(url, json=data)
-    resp.status_code = "200"
+def test_add_new_user_success(token: str, account_data: dict, deleted_account_by_names):
+    url = BASE_URL + "restful/accounts"
+    headers = {"Authorization": "bearer " + token}
+    
+    resp = requests.post(url, headers=headers, json=account_data)
     json = resp.json()
+    assert resp.status_code == 200
     assert json["message"] == "操作已成功"
-
+    
 
 # 创建用户失败 用户名称重复
-def test_add_new_user_failure():
-    url = "http://81.70.57.108:8080/restful/accounts"
+def test_add_new_user_failure(token, create_account):
+    url = BASE_URL + "restful/accounts"
+    headers = {"Authorization": "bearer " + token}
     data = {
-        "username": "sum",
-        "email": "1112162162@qq.com",
-        "password": "789101",
-        "telephone": "16676207620",
-        "name": "ho",
+        "username": "test_user",
+        "email": "1111111@qq.com",
+        "password": "123456",
+        "telephone": "11111111111",
+        "name": "test"
     }
-    resp = requests.post(url, json=data)
+
+    resp = requests.post(url, headers=headers, json=data)
     json = resp.json()
     resp.status_code = "400"
     assert json["message"] == "用户名称、邮箱、手机号码均不允许与现存用户重复"
