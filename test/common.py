@@ -43,7 +43,7 @@ def new_account_data():
         "email": "1111111@qq.com",
         "password": "123456",
         "telephone": "11111111111",
-        "name": "test",
+        "name": "test"
     }
 
 

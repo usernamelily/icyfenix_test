@@ -63,7 +63,7 @@ def get_new_product_id(token, data):
     new_product = create_product(token, data)   
     return new_product['id']
 
-#新建一个产品，并返回产品所以信息
+#新建一个产品，并返回产品所有信息
 @pytest.fixture(scope='function')
 def get_new_product(token, data):
     product = create_product(token, data) 

@@ -66,6 +66,22 @@ def test_add_new_user_failure(token, create_account):
     resp.status_code = "400"
     assert json["message"] == "用户名称、邮箱、手机号码均不允许与现存用户重复"
 
+#创建一个用户缺少必填参数， 期望返回错误
+def test_add_user_missing_required_parameter(token):
+    url = BASE_URL + "restful/accounts"
+    headers = {"Authorization": "bearer " + token}
+    data = {
+        "username": "",
+        "email": "1111111@qq.com",
+        "password": "123456",
+        "telephone": "11111111111",
+        "name": "test"
+    }
+
+    resp = requests.post(url, headers=headers, json=data)
+    json = resp.json()
+    resp.status_code = "400"
+    assert json["message"] == "用户不允许为空"
 
 # 更新自己的用户信息
 def test_update_self(token):

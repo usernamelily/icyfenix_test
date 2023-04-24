@@ -1,16 +1,41 @@
-# 修改订单状态 get payID
 import requests
+from common import BASE_URL, settlements, settlement_data
 
 
-# 取消已支付订单 取消失败
-def test_cancel_order_fail():
-    url = "http://81.70.57.108:8080/restful/pay/4e341f3b-2217-408c-9e38-5ef30438edcc?state=CANCEL"
-    resp = requests.patch(url)
-    # assert resp.status_code ==
+# 提交结算单，支付状态为待支付，然后取消订单
+def test_settlement(token):
+    #提交结算单
+    new_settlement = settlements(token)
+    
+    #断言订单状态为待支付
+    assert new_settlement["payState"] == "WAITING"
+    
+    #获取结算单id
+    payid = new_settlement["payId"]
+    
+    #取消订单
+    url = BASE_URL + "restful/pay/" + str(payid)
+    query_param = {"state": "CANCEL"}
+    headers = {"Authorization": "bearer " + token}
+    resp = requests.patch(url, params=query_param, headers=headers)
+    json = resp.json()
+    
+    #断言订单状态为取消
+    assert resp.status_code ==200
+    assert json["code"] == 0
+    assert json['message'] == '操作已成功'
+    
 
+# 提交缺失收件人姓名的结算单
+def test_settlement_faile(token):
+    data = settlement_data()
+    data["telephone"] = ""
 
-# 取消未支付订单 取消成功
-def test_cancel_order_success():
-    url = "http://81.70.57.108:8080/restful/pay/169b3d2b-458c-45fd-97c0-8c05461cd76f?state=CANCEL"
-    resp = requests.patch(url)
-    assert resp.status_code == 200
+    url = BASE_URL + "restful/settlements"
+    headers = {"Authorization": "bearer " + token}
+    resp = requests.post(url, headers=headers, json=data)
+    json = resp.json()
+    
+    assert resp.status_code == 400 
+    assert json["code"] == 1
+    assert json["message"] == "结算单中缺少配送信息"
